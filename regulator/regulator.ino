@@ -13,26 +13,9 @@
 
 /*-----( Declare objects )-----*/
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); //These are the pins used on this shield
-//Buttons b;
-Screen  scr(lcd);
-App     app(scr);
-ButtonReader btns(&app, 0, 50);
-
-
-class Task : public AdOSTask2<256> {
-public:
-  Task() {
-  }
-  
-  void loop() {
-    lcd.setCursor(0,1);
-    lcd.print(millis());
-    ados()->Sleep(500);
-    //delay(500);
-  }
-
-};
-//Task t;
+Screen        scr(lcd);
+App           app(scr);
+ButtonReader  btns(&app, 0, 50);
 
 unsigned char threshold;
 

@@ -16,12 +16,6 @@ void Screen::print_welcome(int t_ltc, int t_ballon, bool ballon, bool radiateur)
   printer.print("Ballon: ");
   printf(t_ballon, 3);
   printer.print("C    ");
-  /*
-  printer.setCursor(0, 0);
-  //printer.print(millis());
-  //printer.print(" ");
-  printer.print(t_ltc);
-  //delay(100);*/
 }
 
 void Screen::printf(int num, int length){

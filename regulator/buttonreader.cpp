@@ -13,13 +13,8 @@ void ButtonReader::loop() {
 
 int ButtonReader::read(int &adc_key_in) {
   adc_key_in = analogRead(port);      // read the value from the sensor 
-  
-  /*
-  ados()->Sleep(5); //switch debounce delay. Increase this delay if incorrect switch selections are returned.
-  int k = (analogRead(port) - adc_key_in); //gives the button a slight range to allow for a little contact resistance noise
-  if (5 < abs(k)) return NONE;  // double checks the keypress. If the two readings are not equal +/-k value after debounce delay, it tries again.
-  */
-  
+
+  // debounce and wait for button release
   do {
     ados()->Sleep(5);
   } while(abs(analogRead(port) - adc_key_in) < 5);
