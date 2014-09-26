@@ -5,18 +5,22 @@
 #include "buttonreader.h"
 
 class Screen;
+class Settings;
 
 class App : public ButtonReaderCallback {
-  Screen &scr;
-  int     state;
+  Screen   &scr;
+  Settings &settings;
+  int       state;
 public:
 
   enum {
     S_WELCOME,
-    S_WELCOME_VANNES
+    S_WELCOME_VANNES,
+    S_MENU_MODE,
+    S_MENU_TEMP_BALLON
   };
 
-  App(Screen &screen);
+  App(Screen &screen, Settings &settings);
   
   int getState() const;
   void update(int btn);
