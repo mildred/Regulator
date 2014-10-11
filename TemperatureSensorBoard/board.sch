@@ -1,0 +1,447 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:rtdmodule-cache
+EELAYER 27 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date "22 jan 2010"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Notes Line
+	2800 3750 2900 3750
+Wire Notes Line
+	2900 3750 2900 6350
+Wire Notes Line
+	2900 6350 1000 6350
+Wire Notes Line
+	1000 6350 1000 3750
+Wire Wire Line
+	1950 5950 2650 5950
+Wire Wire Line
+	2650 5950 2650 4950
+Wire Wire Line
+	2650 4950 3250 4950
+Wire Wire Line
+	1450 4750 1450 4550
+Wire Wire Line
+	1450 5350 1950 5350
+Wire Wire Line
+	1950 4650 1950 4800
+Wire Wire Line
+	1450 4050 1450 3950
+Connection ~ 1450 4650
+Wire Wire Line
+	1950 5350 1950 5200
+Connection ~ 1450 5350
+Wire Wire Line
+	1450 5250 1450 5400
+Connection ~ 1950 4650
+Wire Wire Line
+	4700 5750 4700 6550
+Wire Wire Line
+	9050 4750 8700 4750
+Wire Wire Line
+	6700 3850 5700 3850
+Wire Wire Line
+	5050 6400 4800 6400
+Wire Wire Line
+	4650 5600 4800 5600
+Wire Notes Line
+	3000 4150 4850 4150
+Wire Notes Line
+	3000 4150 3000 6250
+Wire Notes Line
+	3000 6250 4850 6250
+Wire Notes Line
+	4850 6250 4850 4150
+Connection ~ 3150 5750
+Wire Wire Line
+	3250 5750 3150 5750
+Wire Wire Line
+	3150 6050 3150 5450
+Wire Wire Line
+	3150 5450 3250 5450
+Wire Wire Line
+	6700 3850 6700 4250
+Wire Wire Line
+	5350 4850 5350 4950
+Wire Wire Line
+	5700 5350 5700 5650
+Wire Wire Line
+	6700 5250 6700 5650
+Wire Wire Line
+	7550 4850 7700 4850
+Wire Wire Line
+	7700 4850 7700 4950
+Wire Wire Line
+	7900 4350 7700 4350
+Wire Wire Line
+	7700 4350 7700 4650
+Wire Wire Line
+	6700 4250 7050 4250
+Wire Wire Line
+	5350 4350 5700 4350
+Wire Wire Line
+	7700 4650 7550 4650
+Wire Wire Line
+	8400 4350 8700 4350
+Wire Wire Line
+	8700 4350 8700 4750
+Wire Wire Line
+	7700 5450 7700 5600
+Wire Wire Line
+	7050 4250 7050 4650
+Wire Wire Line
+	6700 5250 7050 5250
+Wire Wire Line
+	7050 5250 7050 4850
+Wire Wire Line
+	5700 3850 5700 4150
+Wire Wire Line
+	3250 5600 3150 5600
+Connection ~ 3150 5600
+Wire Notes Line
+	8950 5900 5100 5900
+Wire Notes Line
+	8950 5900 8950 3600
+Wire Notes Line
+	8950 3600 5100 3600
+Wire Notes Line
+	5100 3600 5100 5900
+Wire Wire Line
+	4650 4650 4650 4450
+Wire Wire Line
+	4700 5750 4650 5750
+Wire Wire Line
+	4700 6550 5050 6550
+Wire Wire Line
+	3250 4650 1450 4650
+Wire Wire Line
+	6700 5650 5700 5650
+Wire Wire Line
+	4700 5150 5700 5150
+Wire Wire Line
+	4800 5600 4800 6400
+Wire Wire Line
+	3250 4800 2550 4800
+Wire Wire Line
+	2550 4800 2550 5750
+Wire Wire Line
+	2550 5750 1950 5750
+Wire Wire Line
+	3250 5100 2750 5100
+Wire Wire Line
+	2750 5100 2750 6150
+Wire Wire Line
+	2750 6150 1950 6150
+Wire Notes Line
+	1000 3750 2850 3750
+Text Notes 1800 6200 0    60   ~ 0
+4
+Text Notes 1800 6000 0    60   ~ 0
+3
+Text Notes 1800 5800 0    60   ~ 0
+2
+Text Notes 1400 5650 0    60   ~ 0
+same as above
+Text Notes 1700 4550 0    60   ~ 0
+RTD input 1
+$Comp
+L CP 100uF
+U 1 1 4C037318
+P 1950 5000
+F 0 "100uF" H 2000 5100 50  0000 L CNN
+F 1 "CP" H 2000 4900 50  0000 L CNN
+F 2 "" H 1950 5000 60  0001 C CNN
+F 3 "" H 1950 5000 60  0001 C CNN
+	1    1950 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L VCC #PWR?
+U 1 1 4C037317
+P 1450 3950
+F 0 "#PWR?" H 1450 4050 30  0001 C CNN
+F 1 "VCC" H 1450 4050 30  0000 C CNN
+F 2 "" H 1450 3950 60  0001 C CNN
+F 3 "" H 1450 3950 60  0001 C CNN
+	1    1450 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 4C037316
+P 1450 5400
+F 0 "#PWR?" H 1450 5400 30  0001 C CNN
+F 1 "GND" H 1450 5330 30  0001 C CNN
+F 2 "" H 1450 5400 60  0001 C CNN
+F 3 "" H 1450 5400 60  0001 C CNN
+	1    1450 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L R PT1000
+U 1 1 4C037315
+P 1450 5000
+F 0 "PT1000" V 1530 5000 50  0000 C CNN
+F 1 "RTD" V 1450 5000 50  0000 C CNN
+F 2 "" H 1450 5000 60  0001 C CNN
+F 3 "" H 1450 5000 60  0001 C CNN
+	1    1450 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L R 10k
+U 1 1 4C037314
+P 1450 4300
+F 0 "10k" V 1530 4300 50  0000 C CNN
+F 1 "R" V 1450 4300 50  0000 C CNN
+F 2 "" H 1450 4300 60  0001 C CNN
+F 3 "" H 1450 4300 60  0001 C CNN
+	1    1450 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L RVAR 10k
+U 1 1 4C134982
+P 5350 4600
+F 0 "10k" V 5430 4550 50  0000 C CNN
+F 1 "RVAR" V 5270 4660 50  0000 C CNN
+F 2 "" H 5350 4600 60  0001 C CNN
+F 3 "" H 5350 4600 60  0001 C CNN
+	1    5350 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L R 220k
+U 1 1 4C1348E2
+P 9300 4750
+F 0 "220k" V 9380 4750 50  0000 C CNN
+F 1 "R" V 9300 4750 50  0000 C CNN
+F 2 "" H 9300 4750 60  0001 C CNN
+F 3 "" H 9300 4750 60  0001 C CNN
+	1    9300 4750
+	0    1    1    0   
+$EndComp
+Text Notes 700  850  0    120  ~ 0
+4x Multiplexed RTD Temperature sensor module
+Text Notes 9750 7050 0    60   ~ 0
+Author: Trystan Lea
+Text Notes 8200 850  0    120  ~ 0
+openenergymonitor.org
+Text Notes 1100 3700 0    60   ~ 0
+RTD INPUT STAGE
+Text Notes 3000 4100 0    60   ~ 0
+MULTIPLEXER STAGE
+$Comp
+L VCC #PWR?
+U 1 1 4C0373A6
+P 4650 4450
+F 0 "#PWR?" H 4650 4550 30  0001 C CNN
+F 1 "VCC" H 4650 4550 30  0000 C CNN
+F 2 "" H 4650 4450 60  0001 C CNN
+F 3 "" H 4650 4450 60  0001 C CNN
+	1    4650 4450
+	1    0    0    -1  
+$EndComp
+Text Notes 5100 6400 0    60   ~ 0
+to Arduino digital output pin
+Text Notes 5100 6550 0    60   ~ 0
+to Arduino digital output pin
+$Comp
+L VCC #PWR?
+U 1 1 4C0370FA
+P 5350 3800
+F 0 "#PWR?" H 5350 3900 30  0001 C CNN
+F 1 "VCC" H 5350 3900 30  0000 C CNN
+F 2 "" H 5350 3800 60  0001 C CNN
+F 3 "" H 5350 3800 60  0001 C CNN
+	1    5350 3800
+	1    0    0    -1  
+$EndComp
+Text Notes 5700 3750 0    40   ~ 0
+Voltage follower
+Text Notes 5700 5850 0    40   ~ 0
+Voltage follower
+Text Notes 7700 4250 0    40   ~ 0
+Difference Amplifier
+Text Notes 5100 3550 0    60   ~ 0
+AMPLIFIER STAGE
+Text Notes 9650 4750 0    60   ~ 0
+to Arduino analog input
+Text Notes 8200 5000 0    60   ~ 0
+LM324
+Text Notes 6200 5500 0    60   ~ 0
+LM324
+Text Notes 6200 4500 0    60   ~ 0
+LM324
+$Comp
+L GND #PWR?
+U 1 1 4C036E7E
+P 3150 6050
+F 0 "#PWR?" H 3150 6050 30  0001 C CNN
+F 1 "GND" H 3150 5980 30  0001 C CNN
+F 2 "" H 3150 6050 60  0001 C CNN
+F 3 "" H 3150 6050 60  0001 C CNN
+	1    3150 6050
+	1    0    0    -1  
+$EndComp
+$Comp
+L CD4052 U?
+U 1 1 4C036E4D
+P 3950 5200
+F 0 "U?" H 3950 5300 60  0001 C CNN
+F 1 "CD4052" H 3950 5100 60  0000 C CNN
+F 2 "" H 3950 5200 60  0001 C CNN
+F 3 "" H 3950 5200 60  0001 C CNN
+	1    3950 5200
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 4C036A30
+P 5350 4950
+F 0 "#PWR?" H 5350 4950 30  0001 C CNN
+F 1 "GND" H 5350 4880 30  0001 C CNN
+F 2 "" H 5350 4950 60  0001 C CNN
+F 3 "" H 5350 4950 60  0001 C CNN
+	1    5350 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L LM324 U?
+U 1 1 4C03695F
+P 6200 5250
+F 0 "U?" H 6250 5450 60  0001 C CNN
+F 1 "LM324" H 6350 5050 50  0001 C CNN
+F 2 "" H 6200 5250 60  0001 C CNN
+F 3 "" H 6200 5250 60  0001 C CNN
+	1    6200 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L R 10k
+U 1 1 4C03693E
+P 7300 4850
+F 0 "10k" V 7380 4850 50  0000 C CNN
+F 1 "R" V 7300 4850 50  0000 C CNN
+F 2 "" H 7300 4850 60  0001 C CNN
+F 3 "" H 7300 4850 60  0001 C CNN
+	1    7300 4850
+	0    1    1    0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 4C036910
+P 7700 5600
+F 0 "#PWR?" H 7700 5600 30  0001 C CNN
+F 1 "GND" H 7700 5530 30  0001 C CNN
+F 2 "" H 7700 5600 60  0001 C CNN
+F 3 "" H 7700 5600 60  0001 C CNN
+	1    7700 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L LM324 U?
+U 1 1 4C0368E6
+P 8200 4750
+F 0 "U?" H 8250 4950 60  0001 C CNN
+F 1 "LM324" H 8350 4550 50  0001 C CNN
+F 2 "" H 8200 4750 60  0001 C CNN
+F 3 "" H 8200 4750 60  0001 C CNN
+	1    8200 4750
+	1    0    0    1   
+$EndComp
+$Comp
+L R 56k
+U 1 1 4C0368B2
+P 7700 5200
+F 0 "56k" V 7780 5200 50  0000 C CNN
+F 1 "R" V 7700 5200 50  0000 C CNN
+F 2 "" H 7700 5200 60  0001 C CNN
+F 3 "" H 7700 5200 60  0001 C CNN
+	1    7700 5200
+	-1   0    0    1   
+$EndComp
+$Comp
+L R 56k
+U 1 1 4C03688D
+P 8150 4350
+F 0 "56k" V 8230 4350 50  0000 C CNN
+F 1 "R" V 8150 4350 50  0000 C CNN
+F 2 "" H 8150 4350 60  0001 C CNN
+F 3 "" H 8150 4350 60  0001 C CNN
+	1    8150 4350
+	0    1    1    0   
+$EndComp
+$Comp
+L R 10k
+U 1 1 4C036784
+P 7300 4650
+F 0 "10k" V 7380 4650 50  0000 C CNN
+F 1 "R" V 7300 4650 50  0000 C CNN
+F 2 "" H 7300 4650 60  0001 C CNN
+F 3 "" H 7300 4650 60  0001 C CNN
+	1    7300 4650
+	0    1    1    0   
+$EndComp
+$Comp
+L R 100k
+U 1 1 4C036742
+P 5350 4100
+F 0 "100k" V 5430 4100 50  0000 C CNN
+F 1 "R" V 5350 4100 50  0000 C CNN
+F 2 "" H 5350 4100 60  0001 C CNN
+F 3 "" H 5350 4100 60  0001 C CNN
+	1    5350 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L LM324 U?
+U 1 1 4C0366C3
+P 6200 4250
+F 0 "U?" H 6250 4450 60  0001 C CNN
+F 1 "LM324" H 6350 4050 50  0001 C CNN
+F 2 "" H 6200 4250 60  0001 C CNN
+F 3 "" H 6200 4250 60  0001 C CNN
+	1    6200 4250
+	1    0    0    1   
+$EndComp
+$EndSCHEMATC
