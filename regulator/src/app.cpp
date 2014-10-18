@@ -1,9 +1,35 @@
 #include "app.h"
 #include "screen.h"
-#include "buttons.h"
+//#include "buttons.h"
 #include "settings.h"
+#include "relay.h"
+#include <math.h>
 
-App::App(Screen &screen, Settings &settings) : scr(screen), settings(settings), state(S_WELCOME) {
+static double digitalLowPass(double last_smoothed, double new_value, double filterVal)
+{
+  if(isnan(last_smoothed)) return new_value;
+  return (new_value * (1 - filterVal)) + (last_smoothed * filterVal);
+}
+
+App::App(Screen &screen, Settings &settings, Relay &relay_ballon_bypass, ados_event_t *temp_event) :
+  scr(screen), settings(settings), relay_ballon_bypass(relay_ballon_bypass), temp_event(temp_event), state(S_WELCOME), tempLTC(NAN), tempBallon(NAN), regulator(settings)
+{
+  refresh();
+}
+
+void App::setup(){
+}
+
+void App::loop() {
+  TempReader::temp_event_t* ev = (TempReader::temp_event_t*) ados()->EventWaitFor(temp_event);
+  switch(ev->channel) {
+  case 0: tempLTC    = digitalLowPass(tempLTC,    ev->temp, 0.90); break;
+  case 1: tempBallon = digitalLowPass(tempBallon, ev->temp, 0.90); break;
+  default: return;
+  }
+  bool act_ballon;
+  regulator.refresh(tempLTC, tempBallon, act_ballon);
+  relay_ballon_bypass.activate(act_ballon);
   refresh();
 }
 
@@ -15,11 +41,11 @@ void App::update(int btn){
   int newstate = -1;
   switch(state) {
     case S_WELCOME:
-      if(btn == ButtonReader::LEFT)  newstate = S_WELCOME_VANNES;
+      if(btn == ButtonReader::LEFT)        newstate = S_WELCOME_VANNES;
       else if(btn == ButtonReader::SELECT) newstate = S_MENU_MODE;
       break;
     case S_WELCOME_VANNES:
-      if(btn == ButtonReader::RIGHT) newstate = S_WELCOME;
+      if(btn == ButtonReader::RIGHT)       newstate = S_WELCOME;
       else if(btn == ButtonReader::SELECT) newstate = S_MENU_MODE;
       break;
     case S_MENU_MODE:
@@ -52,7 +78,7 @@ void App::setState(int s) {
 void App::refresh() {
   switch(state) {
     case S_WELCOME:
-      scr.print_welcome(85, 75, true, true);
+      scr.print_welcome(tempLTC, tempBallon, relay_ballon_bypass.status());
       break;
     case S_WELCOME_VANNES:
       scr.print_valves(true, false);
@@ -67,3 +93,5 @@ void App::refresh() {
       scr.print_error("Unknown screen");
   }
 }
+
+

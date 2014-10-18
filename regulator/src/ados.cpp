@@ -307,7 +307,8 @@ volatile void* cAdOS::EventWaitFor(volatile ados_event_t* event, unsigned long t
             {
                   g_ados_ctrl.m_currenttcb->m_state = ADOS_STATE_NOT_READY_TO_RUN;
             }
-            g_ados_ctrl.m_currenttcb->m_waitingfor = event;
+            g_ados_ctrl.m_currenttcb->m_waitingforlist = 0;
+            g_ados_ctrl.m_currenttcb->m_waitingfor.event = event;
             ados_reSchedule();
       }
       return event->m_param;
@@ -322,10 +323,20 @@ void cAdOS::EventPulse(volatile ados_event_t* event,
       event->m_param = param;
       for (t_tcb=g_ados_ctrl.m_firstcb; NULL!=t_tcb; t_tcb=t_tcb->m_next)
       {
-            if (t_tcb->m_waitingfor==event)
-            {
-                  t_tcb->m_state = ADOS_STATE_READY_TO_RUN;
-                  t_tcb->m_waitingfor = NULL;
+            if (t_tcb->m_waitingforlist) {
+                for (int8_t i = 0; i < t_tcb->m_numwaitingfor; ++i) {
+                    if (t_tcb->m_waitingfor.events[i]==event) {
+                        t_tcb->m_state = ADOS_STATE_READY_TO_RUN;
+                        t_tcb->m_waitingforlist   = 0;
+                        t_tcb->m_waitingfor.event = NULL;
+                    }
+                }
+            } else {
+                if (t_tcb->m_waitingfor.event==event)
+                {
+                    t_tcb->m_state = ADOS_STATE_READY_TO_RUN;
+                    t_tcb->m_waitingfor.event = NULL;
+                }
             }
       }
       if (!fromisr)

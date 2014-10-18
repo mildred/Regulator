@@ -78,17 +78,17 @@ Screen::Screen(LiquidCrystal &printer) : printer(printer) {
   printer.begin(16, 2);
 }
 
-void Screen::print_welcome(int t_ltc, int t_ballon, bool ballon, bool radiateur){
+void Screen::print_welcome(double t_ltc, double t_ballon, bool bypass_ballon){
   printer.setCursor(0, 0);
-  printer.print("LTC    ");
-  printf(t_ltc, 3);
+  printer.print("LTC  ");
+  printf(t_ltc, 3, 1);
   printer.write(CHAR_DEG);
-  printer.print("C  ");
-  printer.print(ballon    ? "B" : " ");
-  printer.print(radiateur ? "R" : " ");
+  printer.print("C");
+  printer.print(" ");
+  printer.print(bypass_ballon ? " R" : "BR");
   printer.setCursor(0, 1);
-  printer.print("Ballon ");
-  printf(t_ballon, 3);
+  printer.print("Bal. ");
+  printf(t_ballon, 3, 1);
   printer.write(CHAR_DEG);
   printer.print("C <");
   printer.write(CHAR_DIAMOND2);
@@ -125,7 +125,7 @@ void Screen::print_string(const char *nom, const char *value, bool modifiable) {
   printer.print(">");
 }
 
-void Screen::print_temperature(const char *nom, int temp, bool modifiable) {
+void Screen::print_temperature(const char *nom, double temp, bool modifiable) {
   printer.clear();
   printer.setCursor(0, 0);
   printer.print("T");
@@ -190,6 +190,12 @@ void Screen::printf(int num, int length){
   unsigned sz = 0;
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
+  
+  bool negative = false;
+  if(num < 0) {
+    num = -num;
+    negative = true;
+  }
 
   *str = '\0';
 
@@ -199,15 +205,41 @@ void Screen::printf(int num, int length){
     *--str = '0' + m - 10 * num;
     sz++;
   } while(num && sz < length);
+  
+  if(negative && sz < length) {
+    *--str = '-';
+    sz++;
+    negative = false;
+  }
 
   while (sz < length) {
     *--str = ' ';
     sz++;
   }
   
-  if (num) {
+  if (num || negative) {
     *str = '*';
   }
   
   printer.write(str);
 }
+
+void Screen::printf(double num, int length, int numDecimals)
+{
+  printf(static_cast<int>(num), length);
+  double decimals = num - static_cast<int>(num);
+  if(decimals < 0) decimals = - decimals;
+  char buf[numDecimals+2];
+  buf[0] = '.';
+  buf[numDecimals+1] = '\0';
+  
+  for(int i = 1; i <= numDecimals; i++) {
+    decimals = decimals * 10;
+    int digit = static_cast<int>(decimals);
+    buf[i] = '0' + digit;
+    decimals = decimals - digit;
+  }
+  
+  printer.write(buf);
+}
+

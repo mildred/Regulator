@@ -62,18 +62,23 @@ typedef struct ados_tcb_t
       ados_timestamp_t m_nexttimetorun;
       ados_state_t m_state;
       volatile struct ados_tcb_t* m_next;
-      volatile struct ados_event_t*   m_waitingfor;
+      uint8_t m_waitingforlist : 1;
+      uint8_t m_numwaitingfor : 7;
+      union {
+        volatile struct ados_event_t*   event;
+        volatile struct ados_event_t**  events;
+      } m_waitingfor;
 }ados_tcb_t;
 
 typedef struct ados_event_t
 {
-      uint8_t             m_state;
+      uint8_t         m_state;
       volatile void*  m_param;
 }ados_event_t;
 
 typedef struct ados_ctrl_t
 {
-      uint8_t*                         m_stack;
+      uint8_t*                  m_stack;
       volatile ados_tcb_t*      m_firstcb;
       volatile ados_tcb_t*      m_currenttcb;
 }ados_ctrl_t;
@@ -81,19 +86,44 @@ typedef struct ados_ctrl_t
 class cAdOS
 {
 public:
+      // initialize scheduler. Should be called once before any other system call
       void Init();
+
+      // start scheduler. Should be called once after all tasks are registered
+      // in the scheduler by the ADOS ->AddTask()  call.
       void Start();
 
 static cAdOS* GetInstance();
 
+      // register task in the scheduler. All the tasks should be registered
+      // before invoking ADOS->Start() system call
       ados_status_t AddTask(volatile ados_tcb_t* tcb, ados_taskptr_t taskptr,
             uint8_t* stack, unsigned int stacksize, ados_priority_t priority);
+      
+      // put task to sleep for a number of milliseconds;
+      // (not allowed from interrupt context)
       void Sleep(unsigned long msec);
 
+      // check event state without locking on it
+      // (allowed from interrupt context)
       uint8_t EventTest(volatile ados_event_t* event);
-      volatile void* EventWaitFor(volatile ados_event_t* event, unsigned long timeout);
+      
+      // wait until the event is pulsed or the timeout occurs
+      // return the event parameter
+      // set timeout to 0 to disable timeout
+      // (not allowed from interrupt context)
+      volatile void* EventWaitFor(volatile ados_event_t* event, unsigned long timeout=0);
+      
+      // awake all the tasks waiting for the event without changing event state
+      // (allowed from interrupt context with fromisr=true)
       void EventPulse(volatile ados_event_t* event, volatile void* param, bool fromisr=false);
+      
+      // set event to signaled state and then pulse it
+      // (allowed from interrupt context with fromisr=true)
       void EventSet(volatile ados_event_t* event, volatile void* param, bool fromisr=false);
+      
+      // set event to nonsignaled state
+      // (allowed from interrupt context)
       void EventReset(volatile ados_event_t* event);
 
 private:

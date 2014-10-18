@@ -13,23 +13,21 @@ class RTDModule
 {
   public:
 
-    void setPins(int _dpinA, int _dpinB, int _analogInPin);
-    void calibration(int channel, double _calA,double _calB);
-    double getTemperatureSmooth(int channel, int AVnum, int SMnum);
-    double getTemperature(int channel);
+    RTDModule(int _dpinA, int _dpinB, int _analogInPin);
+    void calibration(int channel, double _calA, double _calB);
+    double getTemperature();
     int getADC();
-    int dval;
+    void setChannel(int channel);
+
   private:
 
+
     int analogInPin;
-    int addA;
-    int addB;
     int dpinA;
     int dpinB;
-    double scale[5];
-    double offset[5];
-
-    void setChannel(int channel);
+    short  currentChannel;
+    double scale[4];
+    double offset[4];
 
 };
 

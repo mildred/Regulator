@@ -10,15 +10,21 @@
 //-----------------------------------------------------------------------
 // Set module pins
 //-----------------------------------------------------------------------
-void RTDModule::setPins(int _dpinA, int _dpinB, int _analogInPin)
+RTDModule::RTDModule(int _dpinA, int _dpinB, int _analogInPin)
 {
-   analogInPin = _analogInPin;
-   dpinA = _dpinA;
-   dpinB = _dpinB;
+    analogInPin = _analogInPin;
+    dpinA = _dpinA;
+    dpinB = _dpinB;
 
-   pinMode(dpinA, OUTPUT);  
-   pinMode(dpinB, OUTPUT);  
-   dval=100;                  //A delay value..
+    pinMode(dpinA, OUTPUT);  
+    pinMode(dpinB, OUTPUT);  
+
+    currentChannel = 0;
+   
+    for(int i = 0; i < 4; ++i) {
+        scale[i]  = 1.0;
+        offset[i] = 1.0;
+    }
 }
 
 //-----------------------------------------------------------------------
@@ -26,27 +32,29 @@ void RTDModule::setPins(int _dpinA, int _dpinB, int _analogInPin)
 //
 // Calibration needs to be set for every RTD input on the multiplexor
 //-----------------------------------------------------------------------
-void RTDModule::calibration(int channel, double _calA,double _calB)
+void RTDModule::calibration(int channel, double _calA, double _calB)
 {
-   scale[channel] = _calA;
-   offset[channel] = _calB;
+    scale[channel] = _calA;
+    offset[channel] = _calB;
 }
 
 //-----------------------------------------------------------------------
 // Read temperature
 //-----------------------------------------------------------------------
-double RTDModule::getTemperature(int channel)
+double RTDModule::getTemperature()
 {
-   setChannel(channel);
-   double temperature = scale[channel] * analogRead(analogInPin) + offset[channel]; 
-   return temperature;
+    double temperature = scale[currentChannel] * analogRead(analogInPin) + offset[currentChannel]; 
+    return temperature;
 }
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
 // RAW analogread
 //-----------------------------------------------------------------------
-int RTDModule::getADC() { return analogRead(analogInPin); }
+int RTDModule::getADC()
+{
+    return analogRead(analogInPin);
+}
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
@@ -54,16 +62,19 @@ int RTDModule::getADC() { return analogRead(analogInPin); }
 //-----------------------------------------------------------------------
 void RTDModule::setChannel(int channel)
 {
-   //Multiplexor map
-   if (channel==0){addA=0; addB=0;}
-   if (channel==1){addA=1; addB=0;}
-   if (channel==2){addA=0; addB=1;}
-   if (channel==3){addA=1; addB=1;}
-   
-   //Set the multiplexor
-   if (addA==1) digitalWrite(dpinA,HIGH); else digitalWrite(dpinA,LOW);
-   if (addB==1) digitalWrite(dpinB,HIGH); else digitalWrite(dpinB,LOW);
+    int pinAval, pinBval;
 
-   delay(dval);  //Here is the delay
+    currentChannel = channel;
+
+    switch(channel) {
+    default:
+    case 0: pinAval = LOW;  pinBval = LOW;  break;
+    case 1: pinAval = HIGH; pinBval = LOW;  break;
+    case 2: pinAval = LOW;  pinBval = HIGH; break;
+    case 3: pinAval = HIGH; pinBval = HIGH; break;
+    }
+    
+    digitalWrite(dpinA, pinAval);
+    digitalWrite(dpinB, pinBval);
 }
 //-----------------------------------------------------------------------
