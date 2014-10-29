@@ -57,20 +57,23 @@
 #define DPIN_13            13
 
 #define TEMP_NUM_CHANNELS        2
-#define TEMP_CAL_VAL1_PRECISION  0.317460317
-#define TEMP_CAL_CAL2_ZERO      -93.23232323
+//#define TEMP_CAL_VAL1_PRECISION  0.317460317
+//#define TEMP_CAL_CAL2_ZERO      -93.23232323
+#define TEMP_CAL_VAL1_PRECISION  32
+#define TEMP_CAL_CAL2_ZERO      -9323
 
 
 /*-----( Declare objects )-----*/
 LiquidCrystal lcd(DPIN_LCD_RS, DPIN_LCD_ENABLE, DPIN_LCD_DATA1, DPIN_LCD_DATA2, DPIN_LCD_DATA3, DPIN_LCD_DATA4);
 Settings      settings;
 Screen        scr(lcd);
-TempReader    temp(DPIN_TEMP_SELECT_A, DPIN_TEMP_SELECT_B, APIN_TEMP_SENSOR, TEMP_NUM_CHANNELS);
+//TempReader    temp(DPIN_TEMP_SELECT_A, DPIN_TEMP_SELECT_B, APIN_TEMP_SENSOR, TEMP_NUM_CHANNELS, 500 /* ms between reads */);
 Relay         relay_ballon_bypass(DPIN_RELAY_1);
-App           app(scr, settings, relay_ballon_bypass, &temp.temp_event);
+App           app(scr, settings, relay_ballon_bypass, 0 /*&temp.temp_event*/);
 ButtonReader  btns(&app, 0, 50 /* ms between reads */);
 
 
+/*
 unsigned char threshold;
 
 unsigned char get_threshold(){
@@ -80,15 +83,17 @@ unsigned char get_threshold(){
 void set_threshold(char n){
   EEPROM.write(0, n);
 }
+*/
 
 void setup()
 {
+/*
   temp.rtd.calibration(0, TEMP_CAL_VAL1_PRECISION, TEMP_CAL_CAL2_ZERO);
   temp.rtd.calibration(1, TEMP_CAL_VAL1_PRECISION, TEMP_CAL_CAL2_ZERO);
   temp.rtd.calibration(2, TEMP_CAL_VAL1_PRECISION, TEMP_CAL_CAL2_ZERO);
   temp.rtd.calibration(3, TEMP_CAL_VAL1_PRECISION, TEMP_CAL_CAL2_ZERO);
-  
-  threshold = get_threshold();
+*/
+  //threshold = get_threshold();
 }
 
 void loop()

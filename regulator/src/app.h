@@ -6,19 +6,20 @@
 #include "tempreader.h"
 #include "regulator.h"
 #include "ados.h"
+#include "temp.h"
 
 class Screen;
 class Settings;
 class Relay;
 
-class App : public ButtonReaderCallback, public AdOSTask2<512> {
+class App : public ButtonReaderCallback, public AdOSTask2<128> {
   Screen       &scr;
   Settings     &settings;
   Relay        &relay_ballon_bypass;
   ados_event_t *temp_event;
   int           state;
-  double        tempLTC;
-  double        tempBallon;
+  temp_t        tempLTC;
+  temp_t        tempBallon;
   Regulator     regulator;
 public:
 

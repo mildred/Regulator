@@ -1,0 +1,3 @@
+[submodule "regulator2/lib/TimerOne"]
+	path = regulator2/lib/TimerOne
+	url = https://github.com/PaulStoffregen/TimerOne.git

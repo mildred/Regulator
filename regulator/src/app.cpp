@@ -5,14 +5,23 @@
 #include "relay.h"
 #include <math.h>
 
+/*
+#define INVALID_TEMP NAN
 static double digitalLowPass(double last_smoothed, double new_value, double filterVal)
 {
   if(isnan(last_smoothed)) return new_value;
   return (new_value * (1 - filterVal)) + (last_smoothed * filterVal);
 }
+*/
+
+static int16_t digitalLowPass(int16_t last_smoothed, int16_t new_value, int16_t filterVal)
+{
+  if(last_smoothed == TEMP_INVALID) return new_value;
+  return (new_value * (1 - filterVal)) + (last_smoothed * filterVal);
+}
 
 App::App(Screen &screen, Settings &settings, Relay &relay_ballon_bypass, ados_event_t *temp_event) :
-  scr(screen), settings(settings), relay_ballon_bypass(relay_ballon_bypass), temp_event(temp_event), state(S_WELCOME), tempLTC(NAN), tempBallon(NAN), regulator(settings)
+  scr(screen), settings(settings), relay_ballon_bypass(relay_ballon_bypass), temp_event(temp_event), state(S_WELCOME), tempLTC(TEMP_INVALID), tempBallon(TEMP_INVALID), regulator(settings)
 {
   refresh();
 }
@@ -21,16 +30,18 @@ void App::setup(){
 }
 
 void App::loop() {
+/*
   TempReader::temp_event_t* ev = (TempReader::temp_event_t*) ados()->EventWaitFor(temp_event);
   switch(ev->channel) {
-  case 0: tempLTC    = digitalLowPass(tempLTC,    ev->temp, 0.90); break;
-  case 1: tempBallon = digitalLowPass(tempBallon, ev->temp, 0.90); break;
+  case 0: tempLTC    = digitalLowPass(tempLTC,    ev->temp, 90); break;
+  case 1: tempBallon = digitalLowPass(tempBallon, ev->temp, 90); break;
   default: return;
   }
   bool act_ballon;
   regulator.refresh(tempLTC, tempBallon, act_ballon);
   relay_ballon_bypass.activate(act_ballon);
   refresh();
+*/
 }
 
 int App::getState() const {

@@ -1,6 +1,8 @@
 #ifndef __regulator_h__
 #define __regulator_h__
 
+#include "temp.h"
+
 class Settings;
 
 class Regulator {
@@ -9,7 +11,7 @@ class Regulator {
 public:
   Regulator(Settings &settings);
   
-  void refresh(double t_ltc, double t_ballon, bool &act_ballon);
+  void refresh(temp_t t_ltc, temp_t t_ballon, bool &act_ballon);
 
 };
 

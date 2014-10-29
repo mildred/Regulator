@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------
 // Set module pins
 //-----------------------------------------------------------------------
-RTDModule::RTDModule(int _dpinA, int _dpinB, int _analogInPin)
+RTDModule::RTDModule(int8_t _dpinA, int8_t _dpinB, int8_t _analogInPin)
 {
     analogInPin = _analogInPin;
     dpinA = _dpinA;
@@ -32,19 +32,19 @@ RTDModule::RTDModule(int _dpinA, int _dpinB, int _analogInPin)
 //
 // Calibration needs to be set for every RTD input on the multiplexor
 //-----------------------------------------------------------------------
-void RTDModule::calibration(int channel, double _calA, double _calB)
+void RTDModule::calibration(int channel, int16_t _calA, int16_t _calB)
 {
-    scale[channel] = _calA;
+    scale[channel]  = _calA;
     offset[channel] = _calB;
 }
 
 //-----------------------------------------------------------------------
 // Read temperature
 //-----------------------------------------------------------------------
-double RTDModule::getTemperature()
+int16_t RTDModule::getTemperature()
 {
-    double temperature = scale[currentChannel] * analogRead(analogInPin) + offset[currentChannel]; 
-    return temperature;
+    return (static_cast<int32_t>(scale[currentChannel]) * static_cast<int32_t>(analogRead(analogInPin)))
+           + offset[currentChannel]; 
 }
 //-----------------------------------------------------------------------
 
@@ -62,19 +62,14 @@ int RTDModule::getADC()
 //-----------------------------------------------------------------------
 void RTDModule::setChannel(int channel)
 {
-    int pinAval, pinBval;
-
     currentChannel = channel;
 
     switch(channel) {
     default:
-    case 0: pinAval = LOW;  pinBval = LOW;  break;
-    case 1: pinAval = HIGH; pinBval = LOW;  break;
-    case 2: pinAval = LOW;  pinBval = HIGH; break;
-    case 3: pinAval = HIGH; pinBval = HIGH; break;
+    case 0: digitalWrite(dpinA, LOW);  digitalWrite(dpinB, LOW);  break;
+    case 1: digitalWrite(dpinA, HIGH); digitalWrite(dpinB, LOW);  break;
+    case 2: digitalWrite(dpinA, LOW);  digitalWrite(dpinB, HIGH); break;
+    case 3: digitalWrite(dpinA, HIGH); digitalWrite(dpinB, HIGH); break;
     }
-    
-    digitalWrite(dpinA, pinAval);
-    digitalWrite(dpinB, pinBval);
 }
 //-----------------------------------------------------------------------

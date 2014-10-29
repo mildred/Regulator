@@ -1,8 +1,8 @@
 #include "tempreader.h"
 #include <Arduino.h>
 
-TempReader::TempReader(int dportA, int dportB, int aport, unsigned char numChannels) :
-  numChannels(numChannels), rtd(dportA, dportB, aport)
+TempReader::TempReader(int8_t dportA, int8_t dportB, int8_t aport, uint8_t numChannels, uint16_t wait_msecs) :
+  numChannels(numChannels), wait_msecs(wait_msecs), rtd(dportA, dportB, aport)
 {
 }
 
@@ -28,6 +28,7 @@ void TempReader::loop() {
     */
     ados()->EventPulse(&temp_event, &evdata);
   }
+  ados()->Sleep(wait_msecs);
   Serial.println(' ');
 }
 

@@ -1,7 +1,7 @@
 #include <LiquidCrystal.h>
 #include "screen.h"
 
-static byte char_deg[8] = {
+static byte char_deg[8] PROGMEM = {
     B01000,
     B10100,
     B01000,
@@ -11,7 +11,7 @@ static byte char_deg[8] = {
     B00000
 };
 
-static byte char_up[8] = {
+static byte char_up[8] PROGMEM = {
     B00000,
     B00100,
     B01010,
@@ -21,7 +21,7 @@ static byte char_up[8] = {
     B00000
 };
 
-static byte char_dn[8] = {
+static byte char_dn[8] PROGMEM = {
     B00000,
     B10001,
     B10001,
@@ -31,7 +31,7 @@ static byte char_dn[8] = {
     B00000
 };
 
-static byte char_updn[8] = {
+static byte char_updn[8] PROGMEM = {
     B00100,
     B01010,
     B10001,
@@ -41,7 +41,7 @@ static byte char_updn[8] = {
     B00100
 };
 
-static byte char_diamond[8] = {
+static byte char_diamond[8] PROGMEM = {
     B00000,
     B00100,
     B01010,
@@ -51,7 +51,7 @@ static byte char_diamond[8] = {
     B00000
 };
 
-static byte char_diamond2[8] = {
+static byte char_diamond2[8] PROGMEM = {
     B00000,
     B00100,
     B01110,
@@ -147,9 +147,11 @@ void Screen::print_temperature(const char *nom, double temp, bool modifiable) {
   printer.print(">");
 }
 
+const char *stars PROGMEM = "****************";
+
 void Screen::print_menu(const char* cur, const char* sub) {
   printer.setCursor(0, 0);
-  printer.print("****************");
+  printer.print(stars);
   printer.setCursor(2, 0);
   printer.print(" ");
   printer.print(cur);
@@ -165,7 +167,7 @@ void Screen::print_menu(const char* cur, const char* sub) {
 
 void Screen::print_sub_menu(const char* cur, const char* parent) {
   printer.setCursor(0, 0);
-  printer.print("****************");
+  printer.print(stars);
   printer.setCursor(2, 0);
   printer.print(" ");
   printer.print(cur);
