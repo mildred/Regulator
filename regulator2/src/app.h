@@ -17,6 +17,7 @@ class App : public Task {
   temp_t        t_ltc;
   temp_t        t_ballon;
   bool          act_bypass_ballon;
+  long          last_act_time;
   bool          blink;
   ballon_mode_t ballon_mode;
   dpin_t        ballon_bypass_relay_pin;
@@ -33,7 +34,7 @@ public:
   App(ButtonReader &btns, TempReader &temp, Screen &scr, dpin_t ballon_bypass_relay_pin) :
     btns(btns), temp(temp), scr(scr), state(S_WELCOME),
     t_ltc(TEMP_INVALID), t_ballon(TEMP_INVALID), act_bypass_ballon(false),
-    blink(false), ballon_mode(BALLON_MODE_AUTO),
+    last_act_time(0), blink(false), ballon_mode(BALLON_MODE_AUTO),
     ballon_bypass_relay_pin(ballon_bypass_relay_pin)
   {
     refresh();
@@ -65,29 +66,45 @@ bool App::wakeup(){
 ulong_t App::loop(ulong_t ms){
   temp.take_temp(0, t_ltc);
   temp.take_temp(1, t_ballon);
-  switch(ballon_mode) {
-  default:
-  case BALLON_MODE_AUTO:
-    if(!act_bypass_ballon) {
-      // lorsque on chauffe le ballon avec le poele:
-      // - si le poele est moins chaud que le ballon, on coupe le ballon
-      // - si le poele a une température supérieure à 95°C, on coupe le ballon
-      act_bypass_ballon = t_ballon >= t_ltc || t_ltc > TEMP(95);
-    } else {
-      // lorsque on ne chuffe pas le ballon avec le poele:
-      // - si le poele est plus chaud de 2,5°C que le ballon
-      // - et que le poele a une température inférieure à 95°C, on chauffe le ballon
-      act_bypass_ballon = ! (t_ltc > t_ballon + TEMP1(2,5) && t_ltc < TEMP(95));
+  
+  // Compute action to take every 10 seconds only
+  if(last_act_time + 10000 < ms || last_act_time > ms) {
+    bool new_act_bypass_ballon = last_act_time;  
+    switch(ballon_mode) {
+    default:
+    case BALLON_MODE_AUTO:
+      if(t_ltc < TEMP(30)) {
+        // Si la température LTC est basse (poele pas en fonction)
+        // Mettre au repos la vanne
+        // TODO: vérifier si la température descend depuis 15 minutes, mettre au
+        // repos la vanne, si la température monte, revenir a un fonctionnement
+        // normal.
+        new_act_bypass_ballon = false;
+      } else if(!act_bypass_ballon) {
+        // lorsque on chauffe le ballon avec le poele:
+        // - si le poele est moins chaud que le ballon, on coupe le ballon
+        // - si le poele a une température supérieure à 95°C, on coupe le ballon
+        new_act_bypass_ballon = t_ballon >= t_ltc || t_ltc > TEMP(95);
+      } else {
+        // lorsque on ne chuffe pas le ballon avec le poele:
+        // - si le poele est plus chaud de 5°C que le ballon
+        // - et que le poele a une température inférieure à 95°C, on chauffe le ballon
+        new_act_bypass_ballon = ! (t_ltc > t_ballon + TEMP1(4,0) && t_ltc < TEMP(95));
+      }
+      break;
+    case BALLON_MODE_FORCE_ON:
+      new_act_bypass_ballon = false;
+      break;
+    case BALLON_MODE_FORCE_OFF:
+      new_act_bypass_ballon = true;
+      break;
     }
-    break;
-  case BALLON_MODE_FORCE_ON:
-    act_bypass_ballon = false;
-    break;
-  case BALLON_MODE_FORCE_OFF:
-    act_bypass_ballon = true;
-    break;
+    if(new_act_bypass_ballon != act_bypass_ballon) {
+      act_bypass_ballon = new_act_bypass_ballon;
+      digitalWrite(ballon_bypass_relay_pin, new_act_bypass_ballon ? HIGH : LOW);
+      last_act_time = ms;
+    }
   }
-  digitalWrite(ballon_bypass_relay_pin, act_bypass_ballon ? HIGH : LOW);
   blink = ms % 1000 > 500;
   update(btns.take_button());
   refresh();
