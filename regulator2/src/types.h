@@ -6,18 +6,14 @@
 typedef uint8_t apin_t;
 typedef uint8_t dpin_t;
 typedef unsigned long ulong_t;
-typedef int16_t temp_t;
+//typedef int16_t temp_t;
 
-enum ballon_mode_t {
-  BALLON_MODE_AUTO,
-  BALLON_MODE_FORCE_ON,
-  BALLON_MODE_FORCE_OFF
-};
-
-#define TEMP(x)     ((x) * 100)
-#define TEMP1(x, y) ((x) * 100 + (y) * 10)
-#define TEMP2(x, y) ((x) * 100 + (y))
-#define TEMP_INVALID TEMP2(-101,01)
+#define BALLON_MODE_FIRST     0
+#define BALLON_MODE_AUTO      0
+#define BALLON_MODE_FORCE_ON  1
+#define BALLON_MODE_FORCE_OFF 2
+#define BALLON_MODE_LAST      2
+typedef int ballon_mode_t;
 
 #endif
 

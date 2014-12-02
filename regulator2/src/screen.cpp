@@ -142,7 +142,7 @@ Screen::Screen(LiquidCrystal &printer) : printer(printer) {
   printer.begin(16, 2);
 }
 
-void Screen::print_welcome(temp_t t_ltc, temp_t t_ballon, bool force, bool bypass_ballon, bool blink){
+void Screen::print_welcome(float t_ltc, float t_ballon, bool force, bool bypass_ballon, bool blink){
   printer.createChar(0, char_deg);
   printer.createChar(1, blink ? char_diamond : char_diamond2);
   printer.createChar(2, char_ballon);
@@ -298,6 +298,7 @@ void Screen::print_error(const char *error) {
   printer.print(error);
 }
 
+#if 0
 void Screen::printf(int num, int length){
   unsigned sz = 0;
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
@@ -347,4 +348,12 @@ void Screen::print_temp(temp_t num, int length)
   printer.write('.');
   printer.write('0' + d0);
 }
+#endif
 
+void Screen::print_temp(float num, int length)
+{
+  char str[length+4];
+  dtostrf(num, length, 1, str);
+  str[length] = 0;
+  printer.write(str);
+}

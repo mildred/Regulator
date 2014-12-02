@@ -13,7 +13,9 @@ public:
 
 public:
 
-  Task() : last_run(0), next_run(0) {}
+  bool changed;
+
+  Task() : last_run(0), next_run(0), changed(false) {}
 
   virtual ulong_t loop(ulong_t ms) = 0;
   virtual bool    wakeup(){ return false; };
@@ -30,6 +32,7 @@ public:
   }
   
   virtual void tick(ulong_t ms = millis()) {
+    changed = false;
     if(ready(ms)) {
       next_run = loop(ms);
       last_run = ms;

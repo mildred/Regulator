@@ -12,7 +12,7 @@ public:
 
   Screen(LiquidCrystal &printer);
   
-  void print_welcome(temp_t t_ltc, temp_t t_ballon, bool force, bool bypass_ballon, bool blink);
+  void print_welcome(float t_ltc, float t_ballon, bool force, bool bypass_ballon, bool blink);
   void print_ballon_mode(int8_t mode, bool force, bool bypass_ballon, bool blink);
   void print_status(bool force, bool bypass_ballon, bool blink);
   void print_calibrate(int32_t t1, int32_t t2, int32_t t3, int32_t t4, bool blink);
@@ -24,8 +24,11 @@ public:
   void print_error(const char *error);
   
 private:
-  void printf(int num, int length);
-  void print_temp(temp_t num, int length);
+  void print_temp(float temp, int length);
+#if 0
+  //void printf(int num, int length);
+  //void print_temp(temp_t num, int length);
+#endif
 };
 
 #endif

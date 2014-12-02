@@ -1,101 +1,104 @@
 #ifndef __tempreader_h__
 #define __tempreader_h__
 
+#include <OneWire.h>
 #include <Arduino.h>
 #include "task.h"
 #include "types.h"
-
-#define TEMP_CAL_MIN_DEG TEMP1(19,8)
-#define TEMP_CAL_MAX_DEG TEMP1(88,8)
-#define TEMP_CAL_MIN_VAL 354
-#define TEMP_CAL_MAX_VAL 565
-
-//#define TEMP_PRECISION ((TEMP_CAL_MAX_DEG-TEMP_CAL_MIN_DEG) / (TEMP_CAL_MAX_VAL-TEMP_CAL_MIN_VAL))
-//#define TEMP_ZERO      (TEMP_CAL_MIN_DEG - TEMP_CAL_MIN_VAL * TEMP_PRECISION)
-
-#define TEMP_PRECISION TEMP2(0,32)
-#define TEMP_ZERO      TEMP2(-93,23)
-
+#include "config.h"
 
 class TempReader : public Task {
-  dpin_t  out_a;
-  dpin_t  out_b;
-  apin_t  input;
-  int8_t  cur_chan;
-  int8_t  cur_sample;
-  temp_t  samples[16];
+private:
+  typedef byte onewire_addr_t[8];
+  onewire_addr_t devices[TEMP_NUM_DEVICES];
+  uint8_t num_devices_found;
+  uint8_t next_device;
+  OneWire &ds;
 public:
 
-  TempReader(dpin_t out_a, dpin_t out_b, apin_t input) :
-    out_a(out_a), out_b(out_b), input(input), cur_chan(-1), cur_sample(0)
-  {
-    temperatures[0] = TEMP_INVALID;
-    temperatures[1] = TEMP_INVALID;
-    temperatures[2] = TEMP_INVALID;
-    temperatures[3] = TEMP_INVALID;
-  }
+  float temperatures[TEMP_NUM_DEVICES];
 
-  int32_t adcvalues[4];
-  temp_t temperatures[4];
-  
-  void setup(){
-    pinMode(out_a, OUTPUT);
-    pinMode(out_b, OUTPUT);
+  TempReader(OneWire &bus) :
+    num_devices_found(0),
+    next_device(0),
+    ds(bus)
+  {
+    for(int i = 0; i < TEMP_NUM_DEVICES; ++i) {
+      changed = false;
+      temperatures[i] = NAN;
+    }
   }
   
-  void take_temp(uint8_t channel, temp_t &tempvar) {
-    if(temperatures[channel] != TEMP_INVALID) {
-      tempvar = temperatures[channel];
-      temperatures[channel] = TEMP_INVALID;
+  void setup() {
+    int i = 0;
+    ds.reset_search();
+    
+    while(i < TEMP_NUM_DEVICES && ds.search(devices[i])) {
+      if(OneWire::crc8(devices[i], 7) != devices[i][7]) continue;
+      if(devices[i][0] != 0x10 && devices[i][0] != 0x28) continue;
+      i++;
     }
+
+    num_devices_found = i;
   }
   
   ulong_t loop(ulong_t ms) {
-    if(cur_chan >= 0 && cur_chan < 4) {
-      if(cur_sample < 16) {
-        samples[cur_sample++] = read_adc();
-      } else {
-        temperatures[cur_chan] = read_temperature(adcvalues[cur_chan]);
-        cur_sample = 0;
-        cur_chan = (cur_chan+1) % 4;
-      }
-    } else {
-      cur_chan = 0;
-      cur_sample = 0;
-    }
-    write_channel();
-    if(cur_sample == 0)
-      return ms + 50;
-    else
-      return ms + 5;
+    temperatures[next_device] = getTemperature(devices[next_device]);
+    next_device = (next_device + 1) % num_devices_found;
+    //fetchTemperatures();
+    //startConversion();
+    return ms + 1000;
   }
 
 private:
 
-  temp_t read_adc() {
-    return analogRead(input);
+  void startConversion() {
+    ds.reset();
+    for(int i = 0; i < num_devices_found; ++i) {
+      ds.select(devices[i]);
+      ds.write(0x44); // Start conversion
+    }
+  }
+  
+  void fetchTemperatures() {
+    byte data[9];
+    for(int i = 0; i < num_devices_found; ++i) {
+      ds.reset();
+      ds.select(devices[i]);
+      ds.write(0xBE); // Read Scratchpad
+
+      for (int i = 0; i < 9; i++) { // we need 9 bytes
+        data[i] = ds.read();
+      }
+
+      byte MSB = data[1];
+      byte LSB = data[0];
+
+      float tempRead = ((MSB << 8) | LSB); //using two's compliment
+      temperatures[i] = tempRead / 16;
+    }
   }
 
-  temp_t read_temperature(int32_t &rawval) {
-    int32_t avg = 0;
-    for(int i = 0; i < 16; ++i) {
-      avg += samples[i];
-    }
-    avg = avg / 16;
-    rawval = avg;
-    return avg * static_cast<int32_t>(TEMP_PRECISION) + TEMP_ZERO;
-  }
+  float getTemperature(onewire_addr_t addr) {
+    byte data[9];
+    
+    ds.reset();
+    ds.select(addr);
+    ds.write(0x44); // Start conversion
 
-  void write_channel() {
-    //digitalWrite(out_a, (cur_chan%2 == 0) ? LOW : HIGH); delay(5); digitalWrite(out_b, LOW); delay(5);
-    //return;
-    switch(cur_chan) {
-    default:
-    case 0: digitalWrite(out_a, LOW);  digitalWrite(out_b, LOW);  break;
-    case 1: digitalWrite(out_a, HIGH); digitalWrite(out_b, LOW);  break;
-    case 2: digitalWrite(out_a, LOW);  digitalWrite(out_b, HIGH); break;
-    case 3: digitalWrite(out_a, HIGH); digitalWrite(out_b, HIGH); break;
+    ds.reset();
+    ds.select(addr);
+    ds.write(0xBE); // Read Scratchpad
+
+    for (int i = 0; i < 9; i++) { // we need 9 bytes
+      data[i] = ds.read();
     }
+
+    byte MSB = data[1];
+    byte LSB = data[0];
+
+    float tempRead = ((MSB << 8) | LSB); //using two's compliment
+    return tempRead / 16;
   }
 };
 
