@@ -2,47 +2,90 @@
 #define __app_h__
 
 #include <Arduino.h>
-#include "buttonreader.h"
+#include "task.h"
+#include "math.h"
 #include "tempreader.h"
-#include "regulator.h"
-#include "ados.h"
-#include "temp.h"
 
+class ButtonReader;
 class Screen;
-class Settings;
-class Relay;
 
-class App : public ButtonReaderCallback, public AdOSTask2<128> {
-  Screen       &scr;
-  Settings     &settings;
-  Relay        &relay_ballon_bypass;
-  ados_event_t *temp_event;
-  int           state;
-  temp_t        tempLTC;
-  temp_t        tempBallon;
-  Regulator     regulator;
+class App : public Task {
+public:
+  TempReader    &temp;
+  bool           act_ballon;
+  ballon_mode_t  ballon_mode;
+  dpin_t         ballon_relay_pin;
+
 public:
 
-  enum {
-    S_WELCOME,
-    S_WELCOME_VANNES,
-    S_MENU_MODE,
-    S_MENU_TEMP_BALLON
-  };
-
-  App(Screen &screen, Settings &settings, Relay &relay_ballon_bypass, ados_event_t *temp_event);
+  App(TempReader &temp, dpin_t ballon_relay_pin) :
+    temp(temp),
+    act_ballon(false),
+    ballon_mode(BALLON_MODE_AUTO),
+    ballon_relay_pin(ballon_relay_pin)
+  {
+  }
   
-  void setup();
-  void loop();
+  void setup(){
+    temp.setup();
+    pinMode(ballon_relay_pin, OUTPUT);
+    write();
+  }
   
-  int getState() const;
-  void update(int btn);
+  void    update(uint8_t btn);
+  bool    wakeup();
+  ulong_t loop(ulong_t ms);
   
-  void buttonClicked(int b) { update(b); }
+  float t_ltc()    { return temp.temperatures[0]; }
+  float t_ballon() { return temp.temperatures[1]; }
   
 private:
-  void setState(int s);
-  void refresh();
+  void write();
 };
+
+#include "buttonreader.h"
+#include "screen.h"
+#include "types.h"
+
+bool App::wakeup(){
+  return temp.changed;
+}
+
+ulong_t App::loop(ulong_t ms){
+  // Compute action to take every 10 seconds only
+  bool new_act_ballon = act_ballon;
+  switch(ballon_mode) {
+  default:
+  case BALLON_MODE_AUTO:
+    if(act_ballon) {
+      // lorsque on chauffe le ballon avec le poele:
+      // - si le poele est moins chaud que le ballon, on coupe le ballon
+      // - si le ballon a une température supérieure à 95°C, on coupe le ballon
+      new_act_ballon = t_ballon() < t_ltc() && t_ballon() < 95.0;
+    } else {
+      // lorsque on ne chuffe pas le ballon avec le poele:
+      // - si le poele est plus chaud de 1°C que le ballon
+      // - et que le poele a une température inférieure à 95°C, on chauffe le ballon
+      new_act_ballon = t_ltc() > t_ballon() + 1.0 && t_ballon() < 95.0;
+    }
+    break;
+  case BALLON_MODE_FORCE_ON:
+    new_act_ballon = true;
+    break;
+  case BALLON_MODE_FORCE_OFF:
+    new_act_ballon = false;
+    break;
+  }
+  if(new_act_ballon != act_ballon) {
+    act_ballon = new_act_ballon;
+    write();
+    changed = true;
+  }
+  return ms+500;
+}
+
+void App::write() {
+  digitalWrite(ballon_relay_pin, act_ballon ? LOW : HIGH);  
+}
 
 #endif
