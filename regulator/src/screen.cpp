@@ -1,5 +1,6 @@
 #include <LiquidCrystal.h>
 #include "screen.h"
+#include "version.h"
 
 static byte char_deg[8] = {
     B01000,
@@ -296,6 +297,15 @@ void Screen::print_error(const char *error) {
   printer.print("Error: ");
   printer.setCursor(0, 1);
   printer.print(error);
+}
+
+void Screen::print_version(char vernum) {
+  printer.clear();
+  printer.print("Version ");
+  printer.print((char)('0' + vernum));
+  printer.print(":");
+  printer.setCursor(0, 1);
+  printer.print(vernum == 0 ? VERSION1 : VERSION2);
 }
 
 #if 0

@@ -22,6 +22,7 @@ public:
   void print_menu(const char* cur, const char* sub);
   void print_sub_menu(const char* cur, const char* parent);
   void print_error(const char *error);
+  void print_version(char vernum);
   
 private:
   void print_temp(float temp, int length);
