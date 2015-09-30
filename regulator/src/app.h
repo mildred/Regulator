@@ -57,16 +57,24 @@ ulong_t App::loop(ulong_t ms){
   switch(ballon_mode) {
   default:
   case BALLON_MODE_AUTO:
-    if(act_ballon) {
+    // Si le LTC est inférieur a 25°C (il ne tourne pas) on active le ballon
+    // (électrovane au repos)
+    if (t_ltc() < 25.0) {
+      new_act_ballon = 1;
+    } else if (act_ballon) {
       // lorsque on chauffe le ballon avec le poele:
       // - si le poele est moins chaud que le ballon, on coupe le ballon
       // - si le ballon a une température supérieure à 95°C, on coupe le ballon
-      new_act_ballon = t_ballon() < t_ltc() && t_ballon() < 95.0;
+      new_act_ballon =
+        t_ballon() < t_ltc() &&
+        t_ballon() < 95.0;
     } else {
-      // lorsque on ne chuffe pas le ballon avec le poele:
+      // lorsque on ne chauffe pas le ballon avec le poele:
       // - si le poele est plus chaud de 1°C que le ballon
       // - et que le poele a une température inférieure à 95°C, on chauffe le ballon
-      new_act_ballon = t_ltc() > t_ballon() + 1.0 && t_ballon() < 95.0;
+      new_act_ballon =
+        t_ltc() > t_ballon() + 1.0 &&
+        t_ballon() < 95.0;
     }
     break;
   case BALLON_MODE_FORCE_ON:
