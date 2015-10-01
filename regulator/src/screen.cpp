@@ -42,6 +42,26 @@ static byte char_updn[8] = {
     B00100
 };
 
+static byte char_up_small[8] = {
+    B00100,
+    B01010,
+    B10001,
+    B00000,
+    B00000,
+    B00000,
+    B00000
+};
+
+static byte char_dn_small[8] = {
+    B00000,
+    B00000,
+    B00000,
+    B00000,
+    B10001,
+    B01010,
+    B00100
+};
+
 static byte char_diamond[8] = {
     B00000,
     B00100,
@@ -300,11 +320,13 @@ void Screen::print_error(const char *error) {
 }
 
 void Screen::print_version(char vernum) {
+  printer.createChar(5, char_up_small);
+  printer.createChar(4, char_dn_small);
   printer.clear();
-  printer.print("Version ");
-  printer.print((char)('0' + vernum));
-  printer.print(":");
+  printer.print("Version:");
   printer.setCursor(0, 1);
+  printer.write(vernum == 0 ? 4 : 5);
+  printer.print(" ");
   printer.print(vernum == 0 ? VERSION1 : VERSION2);
 }
 
